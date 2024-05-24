@@ -23,7 +23,7 @@ export async function getCabin(id) {
 export async function getCabinPrice(id) {
   const { data, error } = await supabase
     .from("cabins")
-    .select("regularPrice, discount")
+    .select("regular_price, discount")
     .eq("id", id)
     .single();
 
@@ -37,8 +37,10 @@ export async function getCabinPrice(id) {
 export const getCabins = async function () {
   const { data, error } = await supabase
     .from("cabins")
-    .select("id, name, maxCapacity, regularPrice, discount, image")
+    .select("id, name, max_capacity, regular_price, discount, image")
     .order("name");
+
+  console.log("DATA:", data);
 
   if (error) {
     console.error(error);
@@ -80,7 +82,7 @@ export async function getBookings(guestId) {
     .from("bookings")
     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
+      "id, created_at, start_date, end_date, num_nights, num_guests, total_price, guest_id, cabin_id, cabins(name, image)"
     )
     .eq("guestId", guestId)
     .order("startDate");
@@ -103,7 +105,7 @@ export async function getBookedDatesByCabinId(cabinId) {
     .from("bookings")
     .select("*")
     .eq("cabinId", cabinId)
-    .or(`startDate.gte.${today},status.eq.checked-in`);
+    .or(`start_date.gte.${today},status.eq.checked-in`);
 
   if (error) {
     console.error(error);
