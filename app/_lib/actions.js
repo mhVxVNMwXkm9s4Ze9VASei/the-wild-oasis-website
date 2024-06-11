@@ -6,6 +6,32 @@ import { supabase } from "./supabase";
 import { getBookings } from "./data-service";
 import { redirect } from "next/navigation";
 
+export async function createReservation(bookingData, formData) {
+  const session = await auth();
+
+  if (!session)
+    throw new Error("You must be logged in to perform that action.");
+
+  const newBooking = {
+    ...bookingData,
+    guest_id: session.user.guestId,
+    num_guests: Number(formData.get("num_guests")),
+    observations: formData.get("observations").slice(0, 1000),
+    extras_price: 0,
+    total_price: bookingData.cabin_price,
+    is_paid: false,
+    has_breakfast: false,
+    status: "unconfirmed",
+  };
+
+  const { error } = await supabase.from("bookings").insert([newBooking]);
+
+  if (error) throw new Error("Booking could not be created");
+
+  revalidatePath(`/cabins/${bookingData.id}`);
+  redirect("/cabins/thankyou");
+}
+
 export async function deleteReservation(bookingID) {
   const session = await auth();
 
