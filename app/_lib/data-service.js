@@ -42,8 +42,6 @@ export const getCabins = async function () {
     .select("id, name, max_capacity, regular_price, discount, image")
     .order("name");
 
-  console.log("DATA:", data);
-
   if (error) {
     console.error(error);
     throw new Error("Cabins could not be loaded");
@@ -118,8 +116,8 @@ export async function getBookedDatesByCabinId(cabinId) {
   const bookedDates = data
     .map((booking) => {
       return eachDayOfInterval({
-        start: new Date(booking.startDate),
-        end: new Date(booking.endDate),
+        start: new Date(booking.start_date),
+        end: new Date(booking.end_date),
       });
     })
     .flat();
@@ -164,21 +162,21 @@ export async function createGuest(newGuest) {
   return data;
 }
 
-export async function createBooking(newBooking) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .insert([newBooking])
-    // So that the newly created object gets returned!
-    .select()
-    .single();
+// export async function createBooking(newBooking) {
+//   const { data, error } = await supabase
+//     .from("bookings")
+//     .insert([newBooking])
+//     // So that the newly created object gets returned!
+//     .select()
+//     .single();
 
-  if (error) {
-    console.error(error);
-    throw new Error("Booking could not be created");
-  }
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Booking could not be created");
+//   }
 
-  return data;
-}
+//   return data;
+// }
 
 /*
 /////////////
